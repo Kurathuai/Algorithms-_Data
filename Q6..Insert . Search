@@ -1,0 +1,127 @@
+#include <iostream>
+using namespace std;
+
+// Definition of a Tree Node
+struct TreeNode {
+    int value;
+    TreeNode *left;
+    TreeNode *right;
+
+    // Constructor
+    TreeNode(int val) {
+        value = val;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+// Binary Search Tree Class
+class BinarySearchTree {
+private:
+    TreeNode *root;
+
+    // Helper function to insert a value into the tree
+    TreeNode* insert(TreeNode *node, int val) {
+        if (node == nullptr)
+            return new TreeNode(val);
+
+        if (val < node->value)
+            node->left = insert(node->left, val);
+        else if (val > node->value)
+            node->right = insert(node->right, val);
+
+        return node;
+    }
+
+    // Helper function to search for a value in the tree
+    bool search(TreeNode *node, int val) {
+        if (node == nullptr)
+            return false;
+
+        if (node->value == val)
+            return true;
+        else if (val < node->value)
+            return search(node->left, val);
+        else
+            return search(node->right, val);
+    }
+
+    // Helper function for in-order traversal
+    void inOrder(TreeNode *node) {
+        if (node != nullptr) {
+            inOrder(node->left);
+            cout << node->value << " ";
+            inOrder(node->right);
+        }
+    }
+
+public:
+    // Constructor
+    BinarySearchTree() {
+        root = nullptr;
+    }
+
+    // Public method to insert a value
+    void insert(int val) {
+        root = insert(root, val);
+    }
+
+    // Public method to search for a value
+    bool search(int val) {
+        return search(root, val);
+    }
+
+    // Public method to display the tree (in-order traversal)
+    void display() {
+        inOrder(root);
+        cout << endl;
+    }
+};
+
+int main() {
+    BinarySearchTree bst;
+
+    // Menu for tree operations
+    int choice, value;
+    do {
+        cout << "\nBinary Search Tree Operations:\n";
+        cout << "1. Insert\n";
+        cout << "2. Search\n";
+        cout << "3. Display (In-order Traversal)\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            bst.insert(value);
+            cout << "Value inserted.\n";
+            break;
+
+        case 2:
+            cout << "Enter value to search: ";
+            cin >> value;
+            if (bst.search(value))
+                cout << "Value found in the tree.\n";
+            else
+                cout << "Value not found in the tree.\n";
+            break;
+
+        case 3:
+            cout << "Tree (In-order Traversal): ";
+            bst.display();
+            break;
+
+        case 4:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
