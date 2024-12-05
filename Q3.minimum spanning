@@ -1,0 +1,106 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Structure to represent an edge
+struct Edge {
+    int src, dest, weight;
+};
+
+// Structure to represent a subset for Union-Find
+struct Subset {
+    int parent;
+    int rank;
+};
+
+// Comparator function to sort edges by weight
+bool compareEdges(const Edge& a, const Edge& b) {
+    return a.weight < b.weight;
+}
+
+// Find function for Union-Find
+int find(Subset subsets[], int i) {
+    if (subsets[i].parent != i) {
+        subsets[i].parent = find(subsets, subsets[i].parent);
+    }
+    return subsets[i].parent;
+}
+
+// Union function for Union-Find
+void Union(Subset subsets[], int x, int y) {
+    int rootX = find(subsets, x);
+    int rootY = find(subsets, y);
+
+    if (subsets[rootX].rank < subsets[rootY].rank) {
+        subsets[rootX].parent = rootY;
+    } else if (subsets[rootX].rank > subsets[rootY].rank) {
+        subsets[rootY].parent = rootX;
+    } else {
+        subsets[rootY].parent = rootX;
+        subsets[rootX].rank++;
+    }
+}
+
+// Kruskal's Algorithm
+void kruskalMST(vector<Edge>& edges, int V) {
+    // Sort edges by weight
+    sort(edges.begin(), edges.end(), compareEdges);
+
+    // Allocate memory for subsets (Union-Find structure)
+    Subset* subsets = new Subset[V];
+    for (int v = 0; v < V; ++v) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    vector<Edge> mst; // To store the MST edges
+    int mstWeight = 0;
+
+    // Process edges in ascending order
+    for (const auto& edge : edges) {
+        int x = find(subsets, edge.src);
+        int y = find(subsets, edge.dest);
+
+        // If including this edge does not form a cycle
+        if (x != y) {
+            mst.push_back(edge);
+            mstWeight += edge.weight;
+            Union(subsets, x, y);
+        }
+    }
+
+    // Output the MST
+    cout << "Edges in the Minimum Spanning Tree (MST):\n";
+    for (const auto& edge : mst) {
+        cout << edge.src << " -- " << edge.dest << " == " << edge.weight << endl;
+    }
+    cout << "Total weight of the MST: " << mstWeight << endl;
+
+    // Clean up
+    delete[] subsets;
+}
+
+int main() {
+    int V, E;
+
+    // Input number of vertices and edges
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
+
+    vector<Edge> edges(E);
+
+    // Input edges
+    cout << "Enter the edges (source, destination, weight):\n";
+    for (int i = 0; i < E; ++i) {
+        cin >> edges[i].src >> edges[i].dest >> edges[i].weight;
+    }
+
+    // Find and print the MST using Kruskal's algorithm
+    kruskalMST(edges, V);
+
+    return 0;
+}
