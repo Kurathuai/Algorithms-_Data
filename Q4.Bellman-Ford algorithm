@@ -1,0 +1,156 @@
+#include <iostream>
+#include <vector>
+#include <climits> // For INT_MAX
+
+using namespace std;
+
+// Structure to represent an edge
+struct Edge {
+    int src, dest, weight;
+};
+
+// Bellman-Ford Algorithm
+void bellmanFord(int V, int E, vector<Edge>& edges, int source) {
+    vector<int> distance(V, INT_MAX); // Initialize distances
+    distance[source] = 0;
+
+    // Relax all edges V-1 times
+    for (int i = 1; i < V; ++i) {
+        for (int j = 0; j < E; ++j) {
+            int u = edges[j].src;
+            int v = edges[j].dest;
+            int weight = edges[j].weight;
+
+            if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+                distance[v] = distance[u] + weight;
+            }
+        }
+    }
+
+    // Check for negative-weight cycles
+    for (int j = 0; j < E; ++j) {
+        int u = edges[j].src;
+        int v = edges[j].dest;
+        int weight = edges[j].weight;
+
+        if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+            cout << "Graph contains a negative-weight cycle!" << endl;
+            return;
+        }
+    }
+
+    // Print the shortest distances
+    cout << "Vertex\tDistance from Source" << endl;
+    for (int i = 0; i < V; ++i) {
+        if (distance[i] == INT_MAX) {
+            cout << i << "\tINF" << endl;
+        } else {
+            cout << i << "\t" << distance[i] << endl;
+        }
+    }
+}
+
+int main() {
+    int V, E, source;
+
+    // Input number of vertices and edges
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;#include <iostream>
+#include <vector>
+#include <climits> // For INT_MAX
+
+using namespace std;
+
+// Structure to represent an edge
+struct Edge {
+    int src, dest, weight;
+};
+
+// Bellman-Ford Algorithm
+void bellmanFord(int V, int E, vector<Edge>& edges, int source) {
+    vector<int> distance(V, INT_MAX); // Initialize distances
+    distance[source] = 0;
+
+    // Relax all edges V-1 times
+    for (int i = 1; i < V; ++i) {
+        for (int j = 0; j < E; ++j) {
+            int u = edges[j].src;
+            int v = edges[j].dest;
+            int weight = edges[j].weight;
+
+            if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+                distance[v] = distance[u] + weight;
+            }
+        }
+    }
+
+    // Check for negative-weight cycles
+    for (int j = 0; j < E; ++j) {
+        int u = edges[j].src;
+        int v = edges[j].dest;
+        int weight = edges[j].weight;
+
+        if (distance[u] != INT_MAX && distance[u] + weight < distance[v]) {
+            cout << "Graph contains a negative-weight cycle!" << endl;
+            return;
+        }
+    }
+
+    // Print the shortest distances
+    cout << "Vertex\tDistance from Source" << endl;
+    for (int i = 0; i < V; ++i) {
+        if (distance[i] == INT_MAX) {
+            cout << i << "\tINF" << endl;
+        } else {
+            cout << i << "\t" << distance[i] << endl;
+        }
+    }
+}
+
+int main() {
+    int V, E, source;
+
+    // Input number of vertices and edges
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
+
+    vector<Edge> edges(E);
+
+    // Input edges
+    cout << "Enter the edges (source, destination, weight):\n";
+    for (int i = 0; i < E; ++i) {
+        cin >> edges[i].src >> edges[i].dest >> edges[i].weight;
+    }
+
+    // Input source vertex
+    cout << "Enter the source vertex: ";
+    cin >> source;
+
+    // Run Bellman-Ford Algorithm
+    bellmanFord(V, E, edges, source);
+
+    return 0;
+}
+
+
+    vector<Edge> edges(E);
+
+    // Input edges
+    cout << "Enter the edges (source, destination, weight):\n";
+    for (int i = 0; i < E; ++i) {
+        cin >> edges[i].src >> edges[i].dest >> edges[i].weight;
+    }
+
+    // Input source vertex
+    cout << "Enter the source vertex: ";
+    cin >> source;
+
+    // Run Bellman-Ford Algorithm
+    bellmanFord(V, E, edges, source);
+
+    return 0;
+}
