@@ -1,0 +1,105 @@
+#include <iostream>
+#include <map>
+#include <string>
+using namespace std;
+
+// Node structure for Suffix Tree
+struct SuffixTreeNode {
+    map<char, SuffixTreeNode*> children; // Map to hold child nodes
+    int start;                           // Start index of the edge
+    int *end;                            // End index of the edge
+    SuffixTreeNode* suffixLink;          // Suffix link for Ukkonen's Algorithm
+
+    // Constructor
+    SuffixTreeNode(int start, int *end) {
+        this->start = start;
+        this->end = end;
+        this->suffixLink = nullptr;
+    }
+};
+
+// Suffix Tree class
+class SuffixTree {
+    string text;                   // Input text
+    SuffixTreeNode *root;          // Root of the suffix tree
+    int size;                      // Size of the input text
+
+    // Helper function to create a new node
+    SuffixTreeNode* newNode(int start, int *end) {
+        return new SuffixTreeNode(start, end);
+    }
+
+    // Recursive function to traverse and print the suffix tree
+    void traverse(SuffixTreeNode* node, int level) {
+        if (!node)
+            return;
+
+        for (auto &child : node->children) {
+            cout << string(level * 4, ' ') << text.substr(child.second->start, *(child.second->end) - child.second->start + 1) << endl;
+            traverse(child.second, level + 1);
+        }
+    }
+
+    // Function to delete the tree and free memory
+    void freeTree(SuffixTreeNode* node) {
+        if (!node)
+            return;
+
+        for (auto &child : node->children) {
+            freeTree(child.second);
+        }
+        delete node->end;
+        delete node;
+    }
+
+public:
+    // Constructor
+    SuffixTree(const string &input) {
+        text = input + "$"; // Append unique terminator
+        size = text.size();
+        root = buildTree();
+    }
+
+    // Destructor
+    ~SuffixTree() {
+        freeTree(root);
+    }
+
+    // Build the suffix tree (naive approach for simplicity)
+    SuffixTreeNode* buildTree() {
+        SuffixTreeNode *root = newNode(-1, new int(-1));
+
+        for (int i = 0; i < size; i++) {
+            SuffixTreeNode *current = root;
+
+            for (int j = i; j < size; j++) {
+                char currentChar = text[j];
+
+                if (current->children.find(currentChar) == current->children.end()) {
+                    current->children[currentChar] = newNode(j, new int(size - 1));
+                }
+
+                current = current->children[currentChar];
+            }
+        }
+        return root;
+    }
+
+    // Public function to print the suffix tree
+    void display() {
+        cout << "Suffix Tree:" << endl;
+        traverse(root, 0);
+    }
+};
+
+// Main function
+int main() {
+    string input;
+    cout << "Enter the text: ";
+    cin >> input;
+
+    SuffixTree tree(input);
+    tree.display();
+
+    return 0;
+}
