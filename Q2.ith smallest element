@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
+
+using namespace std;
+
+// Function to swap two elements
+void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+// Partition function
+int partition(vector<int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; ++j) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// Randomized partition function
+int randomizedPartition(vector<int>& arr, int low, int high) {
+    int randomIndex = low + rand() % (high - low + 1); // Generate a random pivot index
+    swap(arr[randomIndex], arr[high]); // Swap with the last element
+    return partition(arr, low, high);
+}
+
+// Randomized Select function
+int randomizedSelect(vector<int>& arr, int low, int high, int i) {
+    if (low == high) {
+        return arr[low]; // Only one element
+    }
+
+    int pivotIndex = randomizedPartition(arr, low, high); // Partition the array
+    int k = pivotIndex - low + 1; // Position of the pivot in the sorted array
+
+    if (i == k) {
+        return arr[pivotIndex]; // The pivot is the i-th smallest element
+    } else if (i < k) {
+        return randomizedSelect(arr, low, pivotIndex - 1, i); // Recur in the left partition
+    } else {
+        return randomizedSelect(arr, pivotIndex + 1, high, i - k); // Recur in the right partition
+    }
+}
+
+int main() {
+    int n, i;
+
+    // Input array size
+    cout << "Enter the number of elements: ";
+    cin >> n;
+
+    vector<int> arr(n);
+
+    // Input array elements
+    cout << "Enter the elements: ";
+    for (int j = 0; j < n; ++j) {
+        cin >> arr[j];
+    }
+
+    // Input i-th smallest element to find
+    cout << "Enter the value of i (1 <= i <= " << n << "): ";
+    cin >> i;
+
+    // Seed the random number generator
+    srand(time(0));
+
+    // Find the i-th smallest element
+    int result = randomizedSelect(arr, 0, n - 1, i);
+
+    // Output the result
+    cout << "The " << i << "-th smallest element is: " << result << endl;
+
+    return 0;
+}
