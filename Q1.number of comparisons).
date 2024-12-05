@@ -1,0 +1,79 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
+
+using namespace std;
+
+// Function to swap two elements
+void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+// Partition function
+int partition(vector<int>& arr, int low, int high, int& comparisons) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; ++j) {
+        comparisons++; // Count comparisons
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// Randomized partition function
+int randomizedPartition(vector<int>& arr, int low, int high, int& comparisons) {
+    int randomIndex = low + rand() % (high - low + 1); // Generate a random pivot index
+    swap(arr[randomIndex], arr[high]); // Swap with the last element
+    return partition(arr, low, high, comparisons);
+}
+
+// Randomized Quick Sort function
+void randomizedQuickSort(vector<int>& arr, int low, int high, int& comparisons) {
+    if (low < high) {
+        int pivotIndex = randomizedPartition(arr, low, high, comparisons);
+        randomizedQuickSort(arr, low, pivotIndex - 1, comparisons);
+        randomizedQuickSort(arr, pivotIndex + 1, high, comparisons);
+    }
+}
+
+int main() {
+    vector<int> arr;
+    int n, comparisons = 0;
+
+    // Input array size
+    cout << "Enter the number of elements: ";
+    cin >> n;
+
+    // Input array elements
+    cout << "Enter the elements: ";
+    arr.resize(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> arr[i];
+    }
+
+    // Seed the random number generator
+    srand(time(0));
+
+    // Sort the array using Randomized Quick Sort
+    randomizedQuickSort(arr, 0, n - 1, comparisons);
+
+    // Output the sorted array
+    cout << "Sorted array: ";
+    for (int i = 0; i < n; ++i) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+
+    // Output the number of comparisons
+    cout << "Number of comparisons: " << comparisons << endl;
+
+    return 0;
+}
